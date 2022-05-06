@@ -1,11 +1,11 @@
-from level.tile import TileVoid, TileFloor
+from level.tile import TileFloor
 
 class Grid:
 
     def __init__(self, size, grid=list()):
 
         if(len(grid) == 0):
-            self._grid = [[TileVoid() for x in range(size)] for y in range(size)]
+            self._grid = [[None for x in range(size)] for y in range(size)]
         else:
             self._grid = grid
 

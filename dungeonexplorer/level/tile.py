@@ -9,14 +9,6 @@ class Tile:
     def get_color(self):
         raise NotImplementedError("Please implement this method")
 
-class TileVoid(Tile):
-    
-    def get_type(self):
-        return 0
-
-    def get_color(self):
-        return (55,55,75)
-
 class TileFloor(Tile):
 
     def get_type(self):
