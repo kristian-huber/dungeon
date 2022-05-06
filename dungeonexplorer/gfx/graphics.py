@@ -8,7 +8,7 @@ batch = pyglet.graphics.Batch()
 
 # Level Variables
 _level = None
-_display_multiplier = 1
+_display_multiplier = 5
 _tiles = list()
 
 def start():
