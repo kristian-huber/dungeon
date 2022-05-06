@@ -4,7 +4,7 @@ from level.graph import Graph
 
 class Level:
 
-    def __init__(self, min_room_size=5, max_room_size=11, grid_size=99, room_attempts=33):
+    def __init__(self, min_room_size=7, max_room_size=13, grid_size=99, room_attempts=50):
         self._min_room_size = min_room_size
         self._max_room_size = max_room_size
         self._grid_size = grid_size

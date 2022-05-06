@@ -15,7 +15,7 @@ class TileFloor(Tile):
         return 1
 
     def get_color(self):
-        return (55, 155, 55)
+        return (55, 55, 55)
 
 class TileWall(Tile):
 
@@ -23,4 +23,4 @@ class TileWall(Tile):
         return 2
 
     def get_color(self):
-        return (25, 105, 25)
+        return (105, 105, 105)
