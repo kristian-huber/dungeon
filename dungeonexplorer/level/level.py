@@ -20,6 +20,8 @@ class Level:
         self._graph.complete_graph()
         self._graph = self._graph.create_min_spanning_tree()
 
+        self._generate_hallways()
+
     def _generate_rooms(self):
         for i in range(self._room_attempts):
             room = Room(
@@ -39,6 +41,15 @@ class Level:
                 self._rooms.append(room)
                 self._grid.place_room(room)
                 self._graph.add_vertex(room)
+
+    def _generate_hallways(self):
+
+        in_graph = list()
+
+        for edge in self._graph._edges:
+            if((edge.dest, edge.src) not in in_graph):
+                self._grid.place_hallway(edge)
+                in_graph.append((edge.src, edge.dest))
 
     def get_grid(self):
         return self._grid
