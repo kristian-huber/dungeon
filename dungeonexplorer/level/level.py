@@ -1,19 +1,24 @@
 from level.grid import Grid
 from level.room import Room
+from level.graph import Graph
 
 class Level:
 
-    def __init__(self):
-        self._min_room_size = 5
-        self._max_room_size = 11
-        self._grid_size = 99
-        self._room_attempts = 33
-
-        self._grid = Grid(self._grid_size)
-        self._rooms = list()
+    def __init__(self, min_room_size=5, max_room_size=11, grid_size=99, room_attempts=33):
+        self._min_room_size = min_room_size
+        self._max_room_size = max_room_size
+        self._grid_size = grid_size
+        self._room_attempts = room_attempts
 
     def generate_level(self):
+        self._grid = Grid(self._grid_size)
+        self._rooms = list()
+        self._graph = Graph()
+
         self._generate_rooms()
+
+        self._graph.complete_graph()
+        self._graph = self._graph.create_min_spanning_tree()
 
     def _generate_rooms(self):
         for i in range(self._room_attempts):
@@ -33,6 +38,7 @@ class Level:
             if not intersects:
                 self._rooms.append(room)
                 self._grid.place_room(room)
+                self._graph.add_vertex(room)
 
     def get_grid(self):
         return self._grid

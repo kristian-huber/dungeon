@@ -10,6 +10,7 @@ batch = pyglet.graphics.Batch()
 _level = None
 _display_multiplier = 5
 _tiles = list()
+_lines = list()
 
 def start():
     pyglet.app.run()
@@ -27,9 +28,11 @@ def set_level(level):
     global _level
     global _display_multiplier
     global _tiles
+    global _lines
 
     _level = level
     _tiles = list()
+    _lines = list()
 
     for j in range(level.get_grid_size()):
         for i in range(level.get_grid_size()):
@@ -41,3 +44,13 @@ def set_level(level):
                 batch=batch
             )
             _tiles.append(tile)
+
+    for edge in level._graph._edges:
+        line = shapes.Line(
+                edge.src.centerX * _display_multiplier, edge.src.centerY * _display_multiplier,
+                edge.dest.centerX * _display_multiplier, edge.dest.centerY * _display_multiplier,
+                2,
+                color=(255, 0, 0),
+                batch=batch
+        )
+        _lines.append(line)

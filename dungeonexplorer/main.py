@@ -1,4 +1,4 @@
-from gfx.graphics import *
+from gfx.graphics import set_level, start
 from level.level import Level
 
 level = Level()
