@@ -41,7 +41,48 @@ class Grid:
                 for i in range(edge.src.x + edge.src.width - 1, edge.dest.x+ 1):
                     self._place_vertical_wall_segment(coord, i)
         else:
-            pass
+            if edge.src.centerX > edge.dest.centerX and edge.src.centerY > edge.dest.centerY:
+                # draw a line from the left of src to the center of dest
+                for i in range(edge.dest.centerX, edge.src.x + 1):
+                    self._place_vertical_wall_segment(edge.src.centerY, i)
+                # draw a line from that point down to dest
+                for i in range(edge.dest.y + edge.dest.height - 1, edge.src.centerY):
+                    self._place_horizontal_wall_segment(i, edge.dest.centerX)
+
+                self._fix_corner(edge.src.centerY, edge.dest.centerX)
+
+            if edge.src.centerX < edge.dest.centerX and edge.src.centerY < edge.dest.centerY:
+                # draw a line right from src to center of dest
+                for i in range(edge.src.x + edge.src.width - 1, edge.dest.centerX):
+                    self._place_vertical_wall_segment(edge.src.centerY, i)
+
+                # draw a line from that point up to the bottom of the dest room
+                for i in range(edge.src.centerY, edge.dest.y + 1):
+                    self._place_horizontal_wall_segment(i, edge.dest.centerX)
+
+                self._fix_corner(edge.dest.centerY, edge.src.centerX)
+            
+            if edge.src.centerX > edge.dest.centerX and edge.src.centerY < edge.dest.centerY:
+                # draw a line up from src to the mid of dest
+                for i in range(edge.src.y + edge.src.height - 1, edge.dest.centerY):
+                    self._place_horizontal_wall_segment(i, edge.src.centerX)
+
+                # draw a line from that point to the left of dest
+                for i in range(edge.dest.x + edge.dest.width - 1, edge.src.centerX):
+                    self._place_vertical_wall_segment(edge.dest.centerY, i)
+
+                self._fix_corner(edge.dest.centerY, edge.src.centerX)
+
+            if edge.src.centerX < edge.dest.centerX and edge.src.centerY > edge.dest.centerY:
+                # draw a line from the right
+                for i in range(edge.src.x + edge.src.width - 1, edge.dest.centerX):
+                    self._place_vertical_wall_segment(edge.src.centerY, i)
+
+                # draw a line down
+                for i in range(edge.dest.y + edge.dest.height - 1, edge.src.centerY):
+                    self._place_horizontal_wall_segment(i, edge.dest.centerX)
+
+                self._fix_corner(edge.src.centerY, edge.dest.centerX)
 
     def _place_vertical_wall_segment(self, y, x):
         if self._grid[y - 1][x] is None:
@@ -49,6 +90,9 @@ class Grid:
         
         if self._is_room_tile(y, x):
             self._grid[y][x] = TileDoorway()
+            coord = (x, y)
+            room = self._room_tiles[coord]
+            room.set_entry_point(x - room.x, y - room.y)
         else:
             self._grid[y][x] = TileFloor()
 
@@ -61,11 +105,17 @@ class Grid:
         
         if self._is_room_tile(y, x):
             self._grid[y][x] = TileDoorway()
+            coord = (x, y)
+            room = self._room_tiles[coord]
+            room.set_entry_point(x - room.x, y - room.y)
         else:
             self._grid[y][x] = TileFloor()
 
         if self._grid[y][x + 1] is None:
             self._grid[y][x + 1] = TileWall()
+
+    def _fix_corner(self, y, x):
+        pass
 
     def _is_room_tile(self, y, x):
         coord = (x, y)
