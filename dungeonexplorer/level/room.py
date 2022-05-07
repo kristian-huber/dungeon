@@ -1,4 +1,4 @@
-from tile import TileDoorway, TileFloor, TileWall
+from level.tile import TileDoorway, TileFloor, TileWall
 import random
 
 class Room:
