@@ -61,6 +61,7 @@ def set_level(level):
             )
             _tiles.append(rect)
 
+    """
     for edge in level._graph._edges:
         line = shapes.Line(
                 edge.src.centerX * _display_multiplier, edge.src.centerY * _display_multiplier,
@@ -70,3 +71,4 @@ def set_level(level):
                 batch=batch
         )
         _lines.append(line)
+    """

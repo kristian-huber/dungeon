@@ -60,7 +60,21 @@ class Grid:
         endB = dest.x + dest.width - 2
 
         if startA <= endB and endA >= startB:
-            return ('x', startB + (endA - startB) // 2)
+            midpoint = -1
+            if(src.centerX > dest.centerX):
+                midpoint = dest.centerX + (src.centerX - dest.centerX) // 2
+                if midpoint < src.x + 1:
+                    midpoint = src.x + 1
+                elif midpoint > dest.x + dest.width - 2:
+                    midpoint = dest.x + dest.width - 2
+            else:
+                midpoint = src.centerX + (dest.centerX - src.centerX) // 2
+                if midpoint < dest.x + 1:
+                    midpoint = dest.x + 1
+                elif midpoint > src.x + src.width - 2:
+                    midpoint = src.x + src.width - 2
+
+            return ('x', midpoint)
 
         # Y overlap
         startA = src.y + 1
@@ -69,6 +83,19 @@ class Grid:
         endB = dest.y + dest.height - 2
         
         if startA <= endB and endA >= startB:
-            return ('y', startB + (endA - startB) // 2)
+            midpoint = -1
+            if(src.centerY > dest.centerY):
+                midpoint = dest.centerY + (src.centerY - dest.centerY) // 2
+                if midpoint < src.y + 1:
+                    midpoint = src.y + 1
+                elif midpoint > dest.y + dest.height - 2:
+                    midpoint = dest.y + dest.height - 2
+            else:
+                midpoint = src.centerY + (dest.centerY - src.centerY) // 2
+                if midpoint < dest.y + 1:
+                    midpoint = dest.y + 1
+                elif midpoint > src.y + src.height - 2:
+                    midpoint = src.y + src.height - 2
+            return ('y', midpoint)
 
         return ('no overlap', -1)
