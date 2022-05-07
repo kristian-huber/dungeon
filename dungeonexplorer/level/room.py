@@ -1,6 +1,6 @@
 import random
 
-from dungeonexplorer.level.tile import TileFloor, TileWall
+from dungeonexplorer.level.tile import TileDoorway, TileFloor, TileWall
 
 class Room:
 
@@ -55,3 +55,6 @@ class Room:
 
     def get_tile_at(self, x, y):
         return self._grid[y][x]
+
+    def set_entry_point(self, x, y):
+        self._grid[y][x] = TileDoorway()

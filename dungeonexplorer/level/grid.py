@@ -1,14 +1,12 @@
 import re
+from dungeonexplorer.level.tile import TileDoorway
 from level.tile import TileFloor, TileWall
 
 class Grid:
 
-    def __init__(self, size, grid=list()):
-
-        if(len(grid) == 0):
-            self._grid = [[None for x in range(size)] for y in range(size)]
-        else:
-            self._grid = grid
+    def __init__(self, size):
+        self._grid = [[None for x in range(size)] for y in range(size)]
+        self._room_tiles = set()
 
     def get_tile_at(self, x, y):
         return self._grid[y][x]
@@ -16,7 +14,14 @@ class Grid:
     def place_room(self, room):
         for j in range(room.y, room.y + room.height):
             for i in range(room.x, room.x + room.width):
-                self._grid[j][i] = room.get_tile_at(i - room.x, j - room.y)
+                
+                tile = room.get_tile_at(i - room.x, j - room.y)
+                
+                self._grid[j][i] = tile
+
+                if tile.get_type() == 2:
+                    coord = (i, j)
+                    self._room_tiles.add(coord)
 
     def place_hallway(self, edge):
         direction, coord = self._is_overlap(edge.src, edge.dest)
@@ -25,28 +30,48 @@ class Grid:
             #Go from Y to Y
             if edge.src.centerY > edge.dest.centerY:
                 for i in range(edge.dest.y + edge.dest.height - 1, edge.src.y + 1):
-                    self._grid[i][coord - 1] = TileWall()
-                    self._grid[i][coord] = TileFloor()
-                    self._grid[i][coord + 1] = TileWall()
+                    self._place_horizontal_wall_segment(i, coord)
             else:
                 for i in range(edge.src.y + edge.src.height - 1, edge.dest.y + 1):
-                    self._grid[i][coord - 1] = TileWall()
-                    self._grid[i][coord] = TileFloor()
-                    self._grid[i][coord + 1] = TileWall()
+                    self._place_horizontal_wall_segment(i, coord)
         elif direction == 'y':
             #Go from X to X
             if edge.src.centerX > edge.dest.centerX:
                 for i in range(edge.dest.x + edge.dest.width - 1, edge.src.x + 1):
-                    self._grid[coord - 1][i] = TileWall()
-                    self._grid[coord][i] = TileFloor()
-                    self._grid[coord + 1][i] = TileWall()
+                    self._place_vertical_wall_segment(coord, i)
             else:
                 for i in range(edge.src.x + edge.src.width - 1, edge.dest.x+ 1):
-                    self._grid[coord - 1][i] = TileWall()
-                    self._grid[coord][i] = TileFloor()
-                    self._grid[coord + 1][i] = TileWall()
+                    self._place_vertical_wall_segment(coord, i)
         else:
             pass
+
+    def _place_vertical_wall_segment(self, y, x):
+        if self._grid[y - 1][x] is None:
+            self._grid[y - 1][x] = TileWall()
+        
+        if self._is_room_tile(y, x):
+            self._grid[y][x] = TileDoorway()
+        else:
+            self._grid[y][x] = TileFloor()
+
+        if self._grid[y + 1][x] is None:
+            self._grid[y + 1][x] = TileWall()
+
+    def _place_horizontal_wall_segment(self, y, x):
+        if self._grid[y][x - 1] is None:
+            self._grid[y][x - 1] = TileWall()
+        
+        if self._is_room_tile(y, x):
+            self._grid[y][x] = TileDoorway()
+        else:
+            self._grid[y][x] = TileFloor()
+
+        if self._grid[y][x + 1] is None:
+            self._grid[y][x + 1] = TileWall()
+
+    def _is_room_tile(self, y, x):
+        coord = (x, y)
+        return self._room_tiles.__contains__(coord)
 
     def _is_overlap(self, src, dest):
 
