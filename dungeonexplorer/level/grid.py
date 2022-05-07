@@ -16,10 +16,7 @@ class Grid:
     def place_room(self, room):
         for j in range(room.y, room.y + room.height):
             for i in range(room.x, room.x + room.width):
-                if i == room.x or i == room.x + room.width - 1 or j == room.y or j == room.y + room.height - 1:
-                    self._grid[j][i] = TileWall()
-                else:
-                    self._grid[j][i] = TileFloor()
+                self._grid[j][i] = room.get_tile_at(i - room.x, j - room.y)
 
     def place_hallway(self, edge):
         direction, coord = self._is_overlap(edge.src, edge.dest)
@@ -62,18 +59,17 @@ class Grid:
         if startA <= endB and endA >= startB:
             midpoint = -1
             if(src.centerX > dest.centerX):
-                midpoint = dest.centerX + (src.centerX - dest.centerX) // 2
-                if midpoint < src.x + 1:
-                    midpoint = src.x + 1
-                elif midpoint > dest.x + dest.width - 2:
-                    midpoint = dest.x + dest.width - 2
+                midpoint = self._clamp(
+                    dest.centerX + (src.centerX - dest.centerX) // 2,
+                    src.x + 1,
+                    dest.x + dest.width - 2
+                )
             else:
-                midpoint = src.centerX + (dest.centerX - src.centerX) // 2
-                if midpoint < dest.x + 1:
-                    midpoint = dest.x + 1
-                elif midpoint > src.x + src.width - 2:
-                    midpoint = src.x + src.width - 2
-
+                midpoint = self._clamp(
+                    src.centerX + (dest.centerX - src.centerX) // 2,
+                    dest.x + 1,
+                    src.x + src.width - 2
+                )
             return ('x', midpoint)
 
         # Y overlap
@@ -85,17 +81,24 @@ class Grid:
         if startA <= endB and endA >= startB:
             midpoint = -1
             if(src.centerY > dest.centerY):
-                midpoint = dest.centerY + (src.centerY - dest.centerY) // 2
-                if midpoint < src.y + 1:
-                    midpoint = src.y + 1
-                elif midpoint > dest.y + dest.height - 2:
-                    midpoint = dest.y + dest.height - 2
+                midpoint = self._clamp(
+                    dest.centerY + (src.centerY - dest.centerY) // 2,
+                    src.y + 1,
+                    dest.y + dest.height - 2
+                )
             else:
-                midpoint = src.centerY + (dest.centerY - src.centerY) // 2
-                if midpoint < dest.y + 1:
-                    midpoint = dest.y + 1
-                elif midpoint > src.y + src.height - 2:
-                    midpoint = src.y + src.height - 2
+                midpoint = self._clamp(
+                    src.centerY + (dest.centerY - src.centerY) // 2,
+                    dest.y + 1,
+                    src.y + src.height - 2
+                )
             return ('y', midpoint)
 
         return ('no overlap', -1)
+
+    def _clamp(self, val, min, max):
+        if val < min:
+            return min
+        elif val > max:
+            return max
+        return val
