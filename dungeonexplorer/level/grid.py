@@ -4,7 +4,7 @@ class Grid:
 
     def __init__(self, size):
         self._grid = [[None for x in range(size)] for y in range(size)]
-        self._room_tiles = set()
+        self._room_tiles = dict()
 
     def get_tile_at(self, x, y):
         return self._grid[y][x]
@@ -19,7 +19,7 @@ class Grid:
 
                 if tile.get_type() == 2:
                     coord = (i, j)
-                    self._room_tiles.add(coord)
+                    self._room_tiles[coord] = room
 
     def place_hallway(self, edge):
         direction, coord = self._is_overlap(edge.src, edge.dest)
