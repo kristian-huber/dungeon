@@ -1,6 +1,5 @@
+from tile import TileDoorway, TileFloor, TileWall
 import random
-
-from dungeonexplorer.level.tile import TileDoorway, TileFloor, TileWall
 
 class Room:
 

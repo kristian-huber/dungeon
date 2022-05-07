@@ -1,6 +1,6 @@
-from level.grid import Grid
-from level.room import Room
-from level.graph import Graph
+from grid import Grid
+from room import Room
+from graph import Graph
 
 class Level:
 

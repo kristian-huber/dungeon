@@ -1,6 +1,4 @@
-import re
-from dungeonexplorer.level.tile import TileDoorway
-from level.tile import TileFloor, TileWall
+from tile import TileDoorway, TileFloor, TileWall
 
 class Grid:
 
