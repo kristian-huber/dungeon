@@ -6,6 +6,9 @@ class Grid:
         self._grid = [[None for x in range(size)] for y in range(size)]
         self._room_tiles = dict()
 
+    def set_tile_at(self, x, y, tile):
+        self._grid[y][x] = tile
+
     def get_tile_at(self, x, y):
         return self._grid[y][x]
 

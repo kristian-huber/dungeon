@@ -1,0 +1,7 @@
+1.) Complete Level Tiles
+ - Make stairs
+ - Make it so grid is generated at the end
+
+2.) Convert tiles to images
+
+3.) Implement player movement

@@ -57,3 +57,10 @@ class Room:
 
     def set_entry_point(self, x, y):
         self._grid[y][x] = TileDoorway()
+
+    def place_stairs(self, tile_stair):
+        x = self.centerX - self.x
+        y = self.centerY - self.y
+        self._grid[y][x] = tile_stair
+
+        return (self.centerX, self.centerY)
