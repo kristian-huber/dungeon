@@ -1,6 +1,7 @@
 from level.grid import Grid
 from level.room import Room
 from level.graph import Graph
+from level.tile import TileStair
 
 class Level:
 
@@ -19,6 +20,10 @@ class Level:
 
         self._graph.complete_graph()
         self._graph = self._graph.create_min_spanning_tree()
+
+        self._generate_hallways()
+
+        self._place_stairs()
 
     def _generate_rooms(self):
         for i in range(self._room_attempts):
@@ -39,6 +44,35 @@ class Level:
                 self._rooms.append(room)
                 self._grid.place_room(room)
                 self._graph.add_vertex(room)
+
+    def _generate_hallways(self):
+        in_graph = list()
+
+        for edge in self._graph._edges:
+            if((edge.dest, edge.src) not in in_graph):
+                self._grid.place_hallway(edge)
+                in_graph.append((edge.src, edge.dest))
+
+    def _place_stairs(self):
+        potential_spots = list()
+
+        for vertex in self._graph._adjacency_list.keys():
+            edges = self._graph._adjacency_list[vertex]
+
+            if len(edges) == 1:
+                potential_spots.append(vertex)
+
+        startRoom = potential_spots[0]
+        endRoom = potential_spots[-1]
+
+        if startRoom == endRoom:
+            raise Exception("Start room cannot be the same as end room")
+
+        x, y = startRoom.place_stairs(TileStair())
+        x2, y2 = endRoom.place_stairs(TileStair())
+
+        self._grid.set_tile_at(x, y, TileStair())
+        self._grid.set_tile_at(x2, y2, TileStair())
 
     def get_grid(self):
         return self._grid
