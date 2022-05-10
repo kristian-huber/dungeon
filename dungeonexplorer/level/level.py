@@ -1,5 +1,6 @@
 from level.grid import Grid
 from level.room import Room
+from level.hallway import Hallway
 from level.graph import Graph
 from level.tile import TileStair
 
@@ -14,6 +15,7 @@ class Level:
     def generate_level(self):
         self._grid = Grid(self._grid_size)
         self._rooms = list()
+        self._hallways = list()
         self._graph = Graph()
 
         self._generate_rooms()
@@ -50,7 +52,11 @@ class Level:
 
         for edge in self._graph._edges:
             if((edge.dest, edge.src) not in in_graph):
-                self._grid.place_hallway(edge)
+
+                hallway = Hallway(edge.src, edge.dest)
+
+                self._hallways.append(hallway)
+                self._grid.place_hallway(hallway)
                 in_graph.append((edge.src, edge.dest))
 
     def _place_stairs(self):
@@ -64,9 +70,6 @@ class Level:
 
         startRoom = potential_spots[0]
         endRoom = potential_spots[-1]
-
-        if startRoom == endRoom:
-            raise Exception("Start room cannot be the same as end room")
 
         x, y = startRoom.place_stairs(TileStair())
         x2, y2 = endRoom.place_stairs(TileStair())
