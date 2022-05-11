@@ -1,4 +1,4 @@
-from level.tile import TileDoorway, TileFloor, TileWall
+from level.tile import TileFloor, TileWall
 import random
 
 class Room:
@@ -54,9 +54,6 @@ class Room:
 
     def get_tile_at(self, x, y):
         return self._grid[y][x]
-
-    def set_entry_point(self, x, y):
-        self._grid[y][x] = TileDoorway()
 
     def place_stairs(self, tile_stair):
         x = self.centerX - self.x
