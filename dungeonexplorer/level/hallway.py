@@ -1,4 +1,4 @@
-from level.tile import TileFloor, TileDoorway, TileWall
+from level.tile import TileFloor, TileWall
 
 class Hallway:
 
@@ -9,6 +9,10 @@ class Hallway:
         direction, midpoint, src, dest = self._is_overlap(room_a, room_b)
 
         if direction == 'x':
+            # Organize src and dest by y
+            if src.y > dest.y:
+                src, dest = dest, src
+
             # Go from Y to Y
             grid_height = (dest.y + 1) - (src.y + src.height - 1)
 
@@ -22,6 +26,10 @@ class Hallway:
                 self._place_horizontal_wall_segment(i, 1)
 
         elif direction == 'y':
+            # Organize src and dest by x
+            if src.x > dest.x:
+                src, dest = dest, src
+
             # Go from X to X
             grid_width = (dest.x + 1) - (src.x + src.width - 1)
 
@@ -35,49 +43,58 @@ class Hallway:
                 self._place_vertical_wall_segment(1, i)
 
         else:
-            self.x = 0
-            self.y = 0
-            self.width = 0
-            self.height = 0
-            self._grid = [[None for x in range(0)] for y in range(0)]
-
-            """
             # Only two cases because src.y is smaller
             if src.centerX < dest.centerX:
                 self.x = src.centerX - 1
-                self.y = src.centerY - 1
-                self._grid = [[None for x in range(dest.centerX + 1 - self.x)] for y in range(dest.centerY + 1 - self.y)]
+                self.y = src.y + src.height - 1
+                self.width = dest.x + 1 - self.x
+                self.height = dest.centerY + 1 - self.y
+                self._grid = [[None for x in range(self.width)] for y in range(self.height)]
                 
                 # Draw a line up
-                for i in range(len(self._grid) - 1):
-                    self._place_horizontal_wall_segment(i, midpoint) 
+                for i in range(self.height - 1):
+                    self._place_horizontal_wall_segment(i, 1) 
 
-                # Draw a line from there to the right
-                for i in range(midpoint + 1, len(self._grid[0])):
-                    self._place_vertical_wall_segment(len(self._grid), i)
+                 # Draw a line from there to the right
+                for i in range(1, self.width):
+                    self._place_vertical_wall_segment(self.height - 2, i)
+
+                self._fix_corner(self.height - 2, 1)
+
             else:
-                self.x = dest.centerX - 1
-                self.y = src.centerY - 1
-                self._grid = [[None for x in range(src.centerX + 1 - self.x)] for y in range(dest.centerY + 1 - self.y)]
+                self.x = dest.x + dest.width - 1
+                self.y = src.y + src.height - 1
+                self.width = src.centerX + 1 - self.x
+                self.height = dest.centerY + 1 - self.y
+                self._grid = [[None for x in range(self.width)] for y in range(self.height)]
 
                 # Draw a line up
-                for i in range(len(self._grid) - 1):
-                    self._place_horizontal_wall_segment(i, midpoint) 
+                for i in range(self.height - 1):
+                    self._place_horizontal_wall_segment(i, self.width - 2)
 
                 # Draw a line from there to the left
-                for i in range(0, midpoint - 1):
-                    self._place_vertical_wall_segment(len(self._grid), i)
-            """
+                for i in range(0, self.width - 1):
+                    self._place_vertical_wall_segment(self.height - 2, i)
+
+                self._fix_corner(self.height - 2, self.width - 2)
 
     def _place_vertical_wall_segment(self, y, x):
-        self._grid[y - 1][x] = TileWall()
+        if(self._grid[y - 1][x] == None):
+            self._grid[y - 1][x] = TileWall()
+
         self._grid[y][x] = TileFloor()
-        self._grid[y + 1][x] = TileWall()
+
+        if(self._grid[y + 1][x] == None):
+            self._grid[y + 1][x] = TileWall()
 
     def _place_horizontal_wall_segment(self, y, x):
-        self._grid[y][x - 1] = TileWall()
+        if(self._grid[y][x - 1] == None):
+            self._grid[y][x - 1] = TileWall()
+
         self._grid[y][x] = TileFloor()
-        self._grid[y][x + 1] = TileWall()
+
+        if(self._grid[y][x + 1] == None):
+            self._grid[y][x + 1] = TileWall()
 
     def _fix_corner(self, y, x):
         for j in range(y - 1, y + 2):

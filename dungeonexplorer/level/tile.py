@@ -23,16 +23,9 @@ class TileWall(Tile):
     def get_color(self):
         return (105, 105, 105)
 
-class TileDoorway(Tile):
-    def get_type(self):
-        return 3
-
-    def get_color(self):
-        return (105, 105, 255)
-
 class TileStair(Tile):
     def get_type(self):
-        return 4
+        return 3
 
     def get_color(self):
         return (255, 105, 105)
