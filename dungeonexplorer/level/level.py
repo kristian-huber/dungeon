@@ -15,7 +15,6 @@ class Level:
     def generate_level(self):
         self._grid = Grid(self._grid_size)
         self._rooms = list()
-        self._hallways = list()
         self._graph = Graph()
 
         self._generate_rooms()
@@ -55,7 +54,6 @@ class Level:
 
                 hallway = Hallway(edge.src, edge.dest)
 
-                self._hallways.append(hallway)
                 self._grid.place_hallway(hallway)
                 in_graph.append((edge.src, edge.dest))
 
