@@ -6,97 +6,90 @@ class Hallway:
         self._populate_grid(room_a, room_b)
 
     def _populate_grid(self, room_a, room_b):
-        direction, coord, src, dest = self._is_overlap(room_a, room_b)
+        direction, midpoint, src, dest = self._is_overlap(room_a, room_b)
 
         if direction == 'x':
-            #Go from Y to Y
-            if src.centerY > dest.centerY:
-                for i in range(dest.y + dest.height - 1, src.y + 1):
-                    self._place_horizontal_wall_segment(i, coord)
-            else:
-                for i in range(src.y + src.height - 1, dest.y + 1):
-                    self._place_horizontal_wall_segment(i, coord)
+            # Go from Y to Y
+            grid_height = (dest.y + 1) - (src.y + src.height - 1)
+
+            self.x = midpoint - 1
+            self.y = src.y + src.height - 1
+            self.width = 3
+            self.height = grid_height
+            self._grid = [[None for x in range(3)] for y in range(grid_height)]
+
+            for i in range(grid_height):
+                self._place_horizontal_wall_segment(i, 1)
+
         elif direction == 'y':
-            #Go from X to X
-            if src.centerX > dest.centerX:
-                for i in range(dest.x + dest.width - 1, src.x + 1):
-                    self._place_vertical_wall_segment(coord, i)
-            else:
-                for i in range(src.x + src.width - 1, dest.x+ 1):
-                    self._place_vertical_wall_segment(coord, i)
+            # Go from X to X
+            grid_width = (dest.x + 1) - (src.x + src.width - 1)
+
+            self.x = src.x + src.width - 1
+            self.y = midpoint - 1
+            self.width = grid_width
+            self.height = 3
+            self._grid = [[None for x in range(grid_width)] for y in range(3)]
+
+            for i in range(grid_width):
+                self._place_vertical_wall_segment(1, i)
+
         else:
-            if src.centerX > dest.centerX and src.centerY > dest.centerY:
-                # draw a line from the left of src to the center of dest
-                for i in range(dest.centerX, src.x + 1):
-                    self._place_vertical_wall_segment(src.centerY, i)
-                # draw a line from that point down to dest
-                for i in range(dest.y + dest.height - 1, src.centerY):
-                    self._place_horizontal_wall_segment(i, dest.centerX)
+            self.x = 0
+            self.y = 0
+            self.width = 0
+            self.height = 0
+            self._grid = [[None for x in range(0)] for y in range(0)]
 
-                self._fix_corner(src.centerY, dest.centerX)
+            """
+            # Only two cases because src.y is smaller
+            if src.centerX < dest.centerX:
+                self.x = src.centerX - 1
+                self.y = src.centerY - 1
+                self._grid = [[None for x in range(dest.centerX + 1 - self.x)] for y in range(dest.centerY + 1 - self.y)]
+                
+                # Draw a line up
+                for i in range(len(self._grid) - 1):
+                    self._place_horizontal_wall_segment(i, midpoint) 
 
-            if src.centerX < dest.centerX and src.centerY < dest.centerY:
-                # draw a line right from src to center of dest
-                for i in range(src.x + src.width - 1, dest.centerX):
-                    self._place_vertical_wall_segment(src.centerY, i)
+                # Draw a line from there to the right
+                for i in range(midpoint + 1, len(self._grid[0])):
+                    self._place_vertical_wall_segment(len(self._grid), i)
+            else:
+                self.x = dest.centerX - 1
+                self.y = src.centerY - 1
+                self._grid = [[None for x in range(src.centerX + 1 - self.x)] for y in range(dest.centerY + 1 - self.y)]
 
-                # draw a line from that point up to the bottom of the dest room
-                for i in range(src.centerY, dest.y + 1):
-                    self._place_horizontal_wall_segment(i, dest.centerX)
+                # Draw a line up
+                for i in range(len(self._grid) - 1):
+                    self._place_horizontal_wall_segment(i, midpoint) 
 
-                self._fix_corner(src.centerY, dest.centerX)
-            
-            if src.centerX > dest.centerX and src.centerY < dest.centerY:
-                # draw a line up from src to the mid of dest
-                for i in range(src.y + src.height - 1, dest.centerY):
-                    self._place_horizontal_wall_segment(i, src.centerX)
-
-                # draw a line from that point to the left of dest
-                for i in range(dest.x + dest.width - 1, src.centerX):
-                    self._place_vertical_wall_segment(dest.centerY, i)
-
-                self._fix_corner(dest.centerY, src.centerX)
-
-            if src.centerX < dest.centerX and src.centerY > dest.centerY:
-                # draw a line from the right
-                for i in range(src.x + src.width - 1, dest.centerX):
-                    self._place_vertical_wall_segment(src.centerY, i)
-
-                # draw a line down
-                for i in range(dest.y + dest.height - 1, src.centerY):
-                    self._place_horizontal_wall_segment(i, dest.centerX)
-
-                self._fix_corner(src.centerY, dest.centerX)
+                # Draw a line from there to the left
+                for i in range(0, midpoint - 1):
+                    self._place_vertical_wall_segment(len(self._grid), i)
+            """
 
     def _place_vertical_wall_segment(self, y, x):
-        if self._grid[y - 1][x] is None:
-            self._grid[y - 1][x] = TileWall()
-        
+        self._grid[y - 1][x] = TileWall()
         self._grid[y][x] = TileFloor()
-
-        if self._grid[y + 1][x] is None:
-            self._grid[y + 1][x] = TileWall()
+        self._grid[y + 1][x] = TileWall()
 
     def _place_horizontal_wall_segment(self, y, x):
-        if self._grid[y][x - 1] is None:
-            self._grid[y][x - 1] = TileWall()
-
+        self._grid[y][x - 1] = TileWall()
         self._grid[y][x] = TileFloor()
-
-        if self._grid[y][x + 1] is None:
-            self._grid[y][x + 1] = TileWall()
+        self._grid[y][x + 1] = TileWall()
 
     def _fix_corner(self, y, x):
         for j in range(y - 1, y + 2):
             for i in range(x - 1, x + 2):
                 if i == x and j == y:
                     self._grid[j][i] = TileFloor()
-                elif self._grid[j][i] == None or self._grid[j][i].get_type() == 0:
+                elif self._grid[j][i] == None:
                     self._grid[j][i] = TileWall()
 
     def _is_overlap(self, room_a, room_b):
     
-        src, dest = room_a, room_b
+        src, dest = None, None
 
         # Y overlap
         start_a, end_a = room_a.y + 1, room_a.y + room_a.height - 2
@@ -110,8 +103,8 @@ class Hallway:
 
             midpoint = self._clamp(
                 src.centerY + (dest.centerY - src.centerY) // 2,
-                src.y + 1,
-                dest.y + dest.height - 2
+                dest.y + 1,
+                src.y + src.height - 2
             )
             return ('y', midpoint, src, dest)
 
@@ -127,10 +120,14 @@ class Hallway:
 
             midpoint = self._clamp(
                 src.centerX + (dest.centerX - src.centerX) // 2,
-                src.x + 1,
-                dest.x + dest.width - 2
+                dest.x + 1,
+                src.x + src.width - 2
             )
             return ('x', midpoint, src, dest)
+
+        # Guarantee that src centerY is less
+        src = room_a if room_a.centerY < room_b.y else room_b
+        dest = room_a if room_a.centerY > room_b.y else room_b
 
         return ('no overlap', -1, src, dest)
 
