@@ -8,11 +8,16 @@ batch = pyglet.graphics.Batch()
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 
+_sprite_sheet = pyglet.image.load('assets/textures/sewer.png')
+_sprite_images = pyglet.image.ImageGrid(_sprite_sheet, 22, 16)
+
+_scroll_x = 0
+_scroll_y = 0
+
 # Level Variables
 _level = None
-_display_multiplier = 5
+_display_multiplier = 16
 _tiles = list()
-_lines = list()
 
 def start():
     pyglet.app.run()
@@ -25,6 +30,8 @@ def on_draw():
 @window.event
 def on_key_release(symbol, modifiers):
     global _level
+    global _scroll_x
+    global _scroll_y
 
     if keys[key.SPACE]:
         print('Regenerating Level')
@@ -39,11 +46,10 @@ def set_level(level):
     global _level
     global _display_multiplier
     global _tiles
-    global _lines
+    global _sprite_images
 
     _level = level
     _tiles = list()
-    _lines = list()
 
     for j in range(level.get_grid_size()):
         for i in range(level.get_grid_size()):
@@ -52,23 +58,9 @@ def set_level(level):
             
             if tile is None:
                 continue
+            
+            rect = pyglet.sprite.Sprite(img=_sprite_images[tile.get_image()], batch=batch)
+            rect.x = i * _display_multiplier
+            rect.y = j * _display_multiplier
 
-            rect = shapes.Rectangle(
-                i * _display_multiplier, j * _display_multiplier,
-                _display_multiplier, _display_multiplier,
-                tile.get_color(),
-                batch=batch
-            )
             _tiles.append(rect)
-
-    """
-    for edge in level._graph._edges:
-        line = shapes.Line(
-                edge.src.centerX * _display_multiplier, edge.src.centerY * _display_multiplier,
-                edge.dest.centerX * _display_multiplier, edge.dest.centerY * _display_multiplier,
-                1,
-                color=(255, 0, 0),
-                batch=batch
-        )
-        _lines.append(line)
-    """
