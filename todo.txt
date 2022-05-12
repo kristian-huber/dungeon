@@ -1,3 +1,5 @@
 1.) Convert tiles to images
 
 2.) Implement player movement
+
+3.) Make constants for IDs and Images

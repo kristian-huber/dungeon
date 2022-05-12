@@ -8,13 +8,8 @@ batch = pyglet.graphics.Batch()
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 
-_sprite_sheet = pyglet.image.load('assets/textures/cave.png')
-_sprite_images = pyglet.image.ImageGrid(_sprite_sheet, 20, 16)
-
-_scroll_x = 0
-_scroll_y = 0
-
 # Level Variables
+_sprite_lookup_table = None
 _level = None
 _display_multiplier = 32
 _tiles = list()
@@ -30,8 +25,6 @@ def on_draw():
 @window.event
 def on_key_release(symbol, modifiers):
     global _level
-    global _scroll_x
-    global _scroll_y
 
     if keys[key.SPACE]:
         print('Regenerating Level')
@@ -42,11 +35,15 @@ def set_display_multiplier(multiplier):
     global _display_multiplier
     _display_multiplier = multiplier
 
+def set_sprite_lookup_table(table):
+    global _sprite_lookup_table
+    _sprite_lookup_table = table
+
 def set_level(level):
     global _level
     global _display_multiplier
     global _tiles
-    global _sprite_images
+    global _sprite_lookup_table
 
     _level = level
     _tiles = list()
@@ -59,7 +56,7 @@ def set_level(level):
             if tile is None:
                 continue
             
-            rect = pyglet.sprite.Sprite(img=_sprite_images[tile.get_image()], batch=batch)
+            rect = pyglet.sprite.Sprite(img=_sprite_lookup_table.get_texture(tile.get_texture()), batch=batch)
             rect.x = i * _display_multiplier
             rect.y = j * _display_multiplier
             rect.scale = 2
