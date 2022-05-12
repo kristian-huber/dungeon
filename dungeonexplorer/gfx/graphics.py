@@ -8,15 +8,15 @@ batch = pyglet.graphics.Batch()
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 
-_sprite_sheet = pyglet.image.load('assets/textures/sewer.png')
-_sprite_images = pyglet.image.ImageGrid(_sprite_sheet, 22, 16)
+_sprite_sheet = pyglet.image.load('assets/textures/cave.png')
+_sprite_images = pyglet.image.ImageGrid(_sprite_sheet, 20, 16)
 
 _scroll_x = 0
 _scroll_y = 0
 
 # Level Variables
 _level = None
-_display_multiplier = 16
+_display_multiplier = 32
 _tiles = list()
 
 def start():
@@ -62,5 +62,6 @@ def set_level(level):
             rect = pyglet.sprite.Sprite(img=_sprite_images[tile.get_image()], batch=batch)
             rect.x = i * _display_multiplier
             rect.y = j * _display_multiplier
+            rect.scale = 2
 
             _tiles.append(rect)

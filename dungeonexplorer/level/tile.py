@@ -14,18 +14,18 @@ class TileFloor(Tile):
         return 1
 
     def get_image(self):
-        return 321
+        return 160
 
 class TileWall(Tile):
     def get_type(self):
         return 2
 
     def get_image(self):
-        return 288
+        return 169
 
 class TileStair(Tile):
     def get_type(self):
         return 3
 
     def get_image(self):
-        return 270
+        return 194
