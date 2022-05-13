@@ -11,7 +11,7 @@ window.push_handlers(keys)
 # Level Variables
 _sprite_lookup_table = None
 _level = None
-_display_multiplier = 32
+_display_multiplier = 24
 _tiles = list()
 
 def start():
@@ -59,6 +59,6 @@ def set_level(level):
             rect = pyglet.sprite.Sprite(img=_sprite_lookup_table.get_texture(tile.get_texture()), batch=batch)
             rect.x = i * _display_multiplier
             rect.y = j * _display_multiplier
-            rect.scale = 2
+            rect.scale = 1.5
 
             _tiles.append(rect)

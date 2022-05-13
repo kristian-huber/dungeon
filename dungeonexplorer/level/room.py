@@ -1,4 +1,5 @@
 from level.tile import TileFloor, TileWall
+from gfx.sprite_lookup_table import DungeonExplorerSprites
 import random
 
 class Room:
@@ -40,8 +41,8 @@ class Room:
             self._grid[self.height - 1][i] = TileWall()
 
         for i in range(self.height):
-            self._grid[i][0] = TileWall()
-            self._grid[i][self.width - 1] = TileWall()
+            self._grid[i][0] = TileWall(texture=DungeonExplorerSprites.TEXTURE_WALL_LEFT)
+            self._grid[i][self.width - 1] = TileWall(texture=DungeonExplorerSprites.TEXTURE_WALL_RIGHT)
 
     def intersects(self, room):
         R1 = (self.x, self.y, self.x + self.width, self.y + self.height)
